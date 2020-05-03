@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, { Component, Fragment } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,100 +14,96 @@ import {
   View,
   Text,
   StatusBar,
+  Animated
 } from 'react-native';
+import  {
+  PanGestureHandler,
+  PinchGestureHandler
+} from 'react-native-gesture-handler';
+const tag ='[GESTURE]'
 
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 
-const App: () => React$Node = () => {
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
+class App extends Component {
+  state = {
+    translateX: new Animated.Value(0),
+    translateY: new Animated.Value(0),
+    scale: new Animated.Value(1)
+  }
+
+  // First exercise with PanGestureHandler
+  // For handling circle location with gestures
+  // handleGesture = Animated.event([{
+  //   nativeEvent: {
+  //     translationX: this.state.translateX,
+  //     translationY:this.state.translateY
+  //   }}],
+  //   {
+  //     useNativeDriver: true
+  //   }
+  // );
+
+  // Second exercise with PinchGestureHandler
+  handleGesture = Animated.event([{ nativeEvent: { scale:this.state.scale }}], { useNativeDriver: true });
+
+  handleGestureStateChange = (event) => {
+   console.log(tag, event.nativeEvent.scale);
+
+   this.setState({
+     scale: event.nativeEvent.scale
+   });
+  }
+
+  render(){
+    const circleTransformStyle = {
+      transform: [
+        {
+          translateY: this.state.translateY
+        },
+        {
+          translateX: this.state.translateX
+        }
+      ]
+    };
+
+    let scaleStyle = {
+      transform: [
+        {
+          perspective: 200
+        },
+        {
+          scale: this.state.scale
+        }
+      ]
+    };
+
+    return (
+      <Fragment>
+        <StatusBar barStyle="dark-content" />
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
+          <View style={styles.container}>
+            <PinchGestureHandler onGestureEvent={this.handleGesture} onHandlerStateChange={this.handleGestureStateChange}>
+              <Animated.View style={[styles.circle, scaleStyle]} />
+            </PinchGestureHandler>
           </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
-  );
+        </SafeAreaView>
+      </Fragment>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
+  container: {
+    flex: 1,
+    justifyContent: "space-around",
+    flexDirection: "column",
+    backgroundColor: "#fff"
   },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
+  circle: {
+    width: 150,
+    height: 150,
+    alignSelf:'center',
+    backgroundColor: "#c00000",
+    borderRadius: 100
   },
 });
 
