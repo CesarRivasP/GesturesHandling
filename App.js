@@ -14,77 +14,74 @@ import {
   View,
   Text,
   StatusBar,
-  Animated
+  Animated,
+  FlatList
 } from 'react-native';
 import  {
   PanGestureHandler,
   PinchGestureHandler
 } from 'react-native-gesture-handler';
-const tag ='[GESTURE]'
+import ListItem from './src/components/list-item'
 
 
 class App extends Component {
   state = {
-    translateX: new Animated.Value(0),
-    translateY: new Animated.Value(0),
-    scale: new Animated.Value(1)
-  }
-
-  // First exercise with PanGestureHandler
-  // For handling circle location with gestures
-  // handleGesture = Animated.event([{
-  //   nativeEvent: {
-  //     translationX: this.state.translateX,
-  //     translationY:this.state.translateY
-  //   }}],
-  //   {
-  //     useNativeDriver: true
-  //   }
-  // );
-
-  // Second exercise with PinchGestureHandler
-  handleGesture = Animated.event([{ nativeEvent: { scale:this.state.scale }}], { useNativeDriver: true });
-
-  handleGestureStateChange = (event) => {
-   console.log(tag, event.nativeEvent.scale);
-
-   this.setState({
-     scale: event.nativeEvent.scale
-   });
+    items: [
+      {
+        id: 1,
+        name: 'item1',
+        description: ' +1 213 323 2343 ',
+      },
+      {
+        id: 2,
+        name: 'hayani',
+        description: ' +1 513 323 2646',
+      },
+      {
+        id: 3,
+        name: 'Oho',
+        description: ' +1 613 673 2646 ',
+      },
+      {
+        id: 4,
+        name: 'Name',
+        description: ' +1 913 323 8846 ',
+      },
+      {
+        id: 5,
+        name: 'item6',
+        description: ' +1 343 683 2646',
+      },
+      {
+        id: 1,
+        name: 'item1',
+        description: '+1 613 323 5656',
+      },
+      {
+        id: 2,
+        name: 'hayani',
+        description: '+1 883 000 2646 ',
+      },
+    ]
   }
 
   render(){
-    const circleTransformStyle = {
-      transform: [
-        {
-          translateY: this.state.translateY
-        },
-        {
-          translateX: this.state.translateX
-        }
-      ]
-    };
-
-    let scaleStyle = {
-      transform: [
-        {
-          perspective: 200
-        },
-        {
-          scale: this.state.scale
-        }
-      ]
-    };
-
     return (
       <Fragment>
         <StatusBar barStyle="dark-content" />
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'red' }}>
-          <View style={styles.container}>
-            <PinchGestureHandler onGestureEvent={this.handleGesture} onHandlerStateChange={this.handleGestureStateChange}>
-              <Animated.View style={[styles.circle, scaleStyle]} />
-            </PinchGestureHandler>
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+          <View style={styles.listItemWrapper}>
+          <View style={styles.titleWrapper}>
+            <Text style={styles.title}>
+              Settings
+            </Text>
           </View>
+
+          <FlatList
+            data={this.state.items}
+            renderItem={({item}) => <ListItem {...item} />}
+          />
+        </View>
         </SafeAreaView>
       </Fragment>
     );
@@ -94,16 +91,23 @@ class App extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-around",
-    flexDirection: "column",
-    backgroundColor: "#fff"
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+    backgroundColor: '#eee',
   },
-  circle: {
-    width: 150,
-    height: 150,
-    alignSelf:'center',
-    backgroundColor: "#c00000",
-    borderRadius: 100
+  titleWrapper: {
+    alignItems: 'flex-start',
+  },
+  title: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    marginLeft: 20,
+    color: 'black',
+    marginVertical: 20,
+  },
+  listItemWrapper: {
+    flex: 1,
+    flexDirection: 'column',
   },
 });
 
